@@ -10,7 +10,7 @@ sys.path.append(str(root))
 import numpy as np
 from sklearn.metrics import accuracy_score
 
-from bikeshare_model.prediction import make_prediction
+from bikeshare_model.predict import make_prediction
 
 
 def test_make_prediction(sample_input_data):
