@@ -19,11 +19,10 @@ class WeekdayImputer(BaseEstimator, TransformerMixin):
 
         self.variable = variable
         self.date_var = date_var
-
+    
     def fit(self, X: pd.DataFrame, y: pd.Series = None):
         # we need the fit statement to accomodate the sklearn pipeline
         return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
         # convert 'dteday' column to Datetime datatype
@@ -121,6 +120,30 @@ class OutlierHandler(BaseEstimator, TransformerMixin):
             if X.loc[i, self.variable] < self.lower_bound:
                 X.loc[i, self.variable]= self.lower_bound
 
+        return X
+
+
+class age_col_tfr(BaseEstimator, TransformerMixin):
+    """Transformer to fill missing age values using the median of the column.
+
+    This class is named to match test expectations (`age_col_tfr`) and
+    implements sklearn's `fit`/`transform` interface.
+    """
+
+    def __init__(self, variables: str):
+        if not isinstance(variables, str):
+            raise ValueError("`variables` should be a string naming the age column")
+        self.variables = variables
+
+    def fit(self, X: pd.DataFrame, y: pd.Series = None):
+        X = X.copy()
+        # compute median ignoring NaNs
+        self.fill_value_ = X[self.variables].median()
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        X = X.copy()
+        X[self.variables] = X[self.variables].fillna(self.fill_value_)
         return X
 
 
