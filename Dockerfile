@@ -1,20 +1,20 @@
 # pull python base image
 FROM python:3.10
 
-# copy application files
-ADD /bikeshare_model_api /bikeshare_model_api/
+ADD requirements.txt requirements.txt
 
-# specify working directory
-WORKDIR /bikeshare_model_api
+ADD *.whl .
 
 # update pip
 RUN pip install --upgrade pip
 
+
+# copy application files
+COPY app/. app/.
 # install dependencies
 RUN pip install -r requirements.txt
-
 # expose port for application
-EXPOSE 8001
+EXPOSE 8080
 
 # start fastapi application
-CMD ["python", "main.py"]
+CMD ["python", "app/main.py"]
