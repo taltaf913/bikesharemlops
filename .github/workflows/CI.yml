@@ -100,6 +100,6 @@ jobs:
       run: docker push $DOCKER_USER/titanic-fastapi
 
     - name: Logout to Docker hub
-      run: docker logoutname: Push a Docker Image
+      run: docker logout
 
        
