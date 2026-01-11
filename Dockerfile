@@ -10,10 +10,9 @@ WORKDIR /bikeshare_model_api
 RUN pip install --upgrade pip
 
 
-# copy API application files into /app in the image
-COPY bikeshare_model_api/. bikeshare_model_api/
+
 # install API dependencies
-RUN pip install -r requirements.txt
+RUN pip install -r app/requirements.txt
 # expose port for application
 EXPOSE 8001
 
