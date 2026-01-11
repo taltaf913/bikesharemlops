@@ -12,7 +12,8 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test", "Acceptance"]
 python_functions = ["test"]
 # NOTE: "doc" is not included here, but gets tested explicitly via "doctesting".
-testpaths = ["tests"]
+[pytest]
+testpaths = tests
 xfail_strict = true
 filterwarnings = [
     "error",
