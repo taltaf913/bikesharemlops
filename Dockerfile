@@ -1,7 +1,7 @@
 # pull python base image
 FROM python:3.10
 
-ADD requirements.txt requirements.txt
+
 
 ADD *.whl .
 
@@ -9,10 +9,10 @@ ADD *.whl .
 RUN pip install --upgrade pip
 
 
-# copy application files
-COPY app/. app/.
-# install dependencies
-RUN pip install -r requirements.txt
+# copy API application files into /app in the image
+COPY bikeshare_model_api/. app/
+# install API dependencies
+RUN pip install -r app/requirements.txt
 # expose port for application
 EXPOSE 8080
 
