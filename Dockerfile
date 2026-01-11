@@ -2,8 +2,9 @@
 FROM python:3.10
 
 
-
+ADD /bikeshare_model_api /bikeshare_model_api/
 ADD *.whl .
+WORKDIR /bikeshare_model_api
 
 # update pip
 RUN pip install --upgrade pip
