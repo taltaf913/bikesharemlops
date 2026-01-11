@@ -13,9 +13,9 @@ RUN pip install --upgrade pip
 # copy API application files into /app in the image
 COPY bikeshare_model_api/. bikeshare_model_api/
 # install API dependencies
-RUN pip install -r bikeshare_model_api/app/requirements.txt
+RUN pip install -r requirements.txt
 # expose port for application
-EXPOSE 8080
+EXPOSE 8001
 
 # start fastapi application
-CMD ["python", "bikeshare_model_api/app/main.py"]
+CMD ["python", "app/main.py"]
