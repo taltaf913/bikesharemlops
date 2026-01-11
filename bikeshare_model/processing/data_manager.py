@@ -52,6 +52,13 @@ def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
 def _load_raw_dataset(*, file_name: str) -> pd.DataFrame:
     dataframe = pd.read_csv(Path(f"{DATASET_DIR}/{file_name}"))
+
+    # If the dataset does not already include 'yr'/'mnth' but has the
+    # date variable, extract them so downstream tests/features expect them.
+    date_var = config.model_config.date_var
+    if date_var in dataframe.columns and ('yr' not in dataframe.columns or 'mnth' not in dataframe.columns):
+        dataframe = get_year_and_month(dataframe=dataframe, date_var=date_var)
+
     return dataframe
 
 def load_dataset(*, file_name: str) -> pd.DataFrame:

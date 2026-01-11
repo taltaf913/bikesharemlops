@@ -19,7 +19,9 @@ def validate_inputs(*, input_df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[d
     """Check model inputs for unprocessable values."""
 
     pre_processed = pre_pipeline_preparation(data_frame = input_df)
-    validated_data = pre_processed[config.model_config.features].copy()
+    # Use reindex to ensure requested feature columns exist; missing columns
+    # will be created with NaN values instead of raising KeyError.
+    validated_data = pre_processed.reindex(columns=config.model_config.features).copy()
     errors = None
 
     try:

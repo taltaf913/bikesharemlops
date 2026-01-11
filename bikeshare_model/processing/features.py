@@ -27,9 +27,12 @@ class WeekdayImputer(BaseEstimator, TransformerMixin):
         X = X.copy()
         # convert 'dteday' column to Datetime datatype
         X[self.date_var] = pd.to_datetime(X[self.date_var], format='%Y-%m-%d')
-        
-        wkday_null_idx = X[X[self.variable].isnull() == True].index
-        X.loc[wkday_null_idx, self.variable] = X.loc[wkday_null_idx, self.date_var].dt.day_name().apply(lambda x: x[:3])
+        # only compute day names where date is present and weekday is missing
+        wkday_null_mask = X[self.variable].isnull() & X[self.date_var].notna()
+        if wkday_null_mask.any():
+            X.loc[wkday_null_mask, self.variable] = (
+                X.loc[wkday_null_mask, self.date_var].dt.day_name().str[:3]
+            )
 
         # drop 'dteday' column after imputation
         X.drop(self.date_var, axis=1, inplace=True)
@@ -81,7 +84,9 @@ class Mapper(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
-        X[self.variable] = X[self.variable].map(self.mappings).astype(int)
+        # map values; keep NA as NaN by casting to float so integer
+        # missing values don't raise during astype conversion
+        X[self.variable] = X[self.variable].map(self.mappings).astype(float)
 
         return X
 
@@ -169,8 +174,14 @@ class WeekdayOneHotEncoder(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
-        
-        encoded_weekdays = self.encoder.transform(X[[self.variable]])
+        # ensure dtype is object so encoder handles string categories and NaNs
+        X[self.variable] = X[self.variable].astype(object)
+        if X[self.variable].isna().all():
+            # no valid values to encode; produce zero columns to match
+            # encoder output shape
+            encoded_weekdays = np.zeros((X.shape[0], len(self.encoded_features_names)))
+        else:
+            encoded_weekdays = self.encoder.transform(X[[self.variable]])
         # Append encoded weekday features to X
         X[self.encoded_features_names] = encoded_weekdays
 
