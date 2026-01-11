@@ -36,7 +36,11 @@ def get_year_and_month(dataframe: pd.DataFrame, date_var: str):
 
 def pre_pipeline_preparation(*, data_frame: pd.DataFrame) -> pd.DataFrame:
 
-    data_frame = get_year_and_month(dataframe = data_frame, date_var = config.model_config.date_var)
+    # Only extract year and month when the date variable is present
+    if config.model_config.date_var in data_frame.columns:
+        data_frame = get_year_and_month(dataframe = data_frame, date_var = config.model_config.date_var)
+    else:
+        data_frame = data_frame.copy()
     
     # Drop unnecessary fields
     for field in config.model_config.unused_fields:
